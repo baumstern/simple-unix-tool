@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 type Shell struct {
@@ -17,11 +19,14 @@ func NewShell() *Shell {
 
 func (s *Shell) getInput() {
 	fmt.Print("$$ ")
-	fmt.Fscanln(os.Stdin, &s.buf)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	s.buf = scanner.Text()
 }
 
 func (s *Shell) Exec() {
-	cmd := exec.Command(s.buf)
+	ss := strings.Split(s.buf, " ")
+	cmd := exec.Command(ss[0], ss[1:]...)
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
